@@ -1,0 +1,20 @@
+{
+  "name": "jianrenjianzhi",
+  "version": "1.0.0",
+  "private": true,
+  "description": "见仁建智 · 面向 MiC / C-SMART / BIPV 建筑科技场景的多智能体协同工程管理系统（离线可运行的交互原型）",
+  "keywords": ["AI Agent", "MiC", "C-SMART", "BIPV", "多智能体", "海之子杯"],
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test": "node tests/run-tests.js && node tests/dom-smoke.js",
+    "test:core": "node tests/run-tests.js",
+    "test:ui": "node tests/dom-smoke.js",
+    "start": "node gateway/server.js",
+    "serve": "node tools/serve.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

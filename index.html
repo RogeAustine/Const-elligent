@@ -1,8 +1,173 @@
-<!DOCTPE html>
-<html>
-  <head>
-  <\head>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070d1a">
+<meta name="description" content="见仁建智 · 面向 MiC / C-SMART / BIPV 建筑科技场景的多智能体协同工程管理系统。">
+<title>见仁建智 · 多智能体协同工程管理系统</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
 
-  <body>
-  <\body>
-<\html>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none">
+        <path d="M6 20.5 24 7l18 13.5V41H6V20.5Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M14 26h20M14 32h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="33" cy="32" r="3.2" stroke="currentColor" stroke-width="2.2"/>
+        <path d="M33 28.8v-3M33 35.2v3M36.2 32h3M29.8 32h-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <h1>见仁建智</h1>
+      <p>多智能体协同工程管理系统 · MiC / C-SMART / BIPV</p>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <div class="provider-badge" id="providerBadge"></div>
+    <div class="topbar-meta">
+      <span>山东大学 · 首届“海之子”杯 AI 智能体挑战计划</span>
+      <span class="sep">|</span>
+      <span>赛道：科技</span>
+    </div>
+  </div>
+</header>
+
+<main class="shell">
+
+  <!-- ============ 左栏：目标输入 + 现场信息 ============ -->
+  <aside class="col col-left">
+    <section class="panel">
+      <header class="panel-head">
+        <h2>现场目标</h2>
+        <span class="hint">Ctrl + Enter 快速启动</span>
+      </header>
+      <div class="panel-body">
+        <textarea id="goalInput" rows="4" placeholder="例如：C3 栋 15 层 MiC 模块吊装进度滞后，请判断偏差来源并给出抢工或顺延方案。">C3 栋 15 层 MiC 模块吊装进度滞后，请判断偏差来源、给出可执行的抢工或顺延方案，并确认吊装窗口内的安全条件。</textarea>
+
+        <div class="chip-row" id="scenarioChips"></div>
+
+        <div class="run-row">
+          <button id="runBtn" class="primary-btn">启动多智能体编排</button>
+          <button id="resetBtn" class="ghost-btn">重置</button>
+        </div>
+
+        <div class="run-options">
+          <label>演示节奏
+            <select id="paceInput">
+              <option value="0">瞬时（看结果）</option>
+              <option value="180">快速</option>
+              <option value="420" selected>标准</option>
+              <option value="900">慢速讲解</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <header class="panel-head"><h2>系统构成</h2></header>
+      <div class="panel-body sys-info" id="sysInfo"></div>
+    </section>
+
+    <section class="panel panel-note">
+      <header class="panel-head"><h2>演示说明</h2></header>
+      <div class="panel-body">
+        <p>本项目为 <b>可离线运行</b> 的智能体原型：默认使用内置的确定性推理器（rule-react），在无网络、无 API Key 的条件下即可完整跑通「目标拆解 → 工具调用 → 跨域关联 → 决策建议」全流程。</p>
+        <p>项目、传感器读数、组串数据与工友信息均为<b>虚构演示样例</b>；工程判定规则来自公开规范条文（GB / JGJ 系列），但<b>最终验收与停复工决定必须由持证人员签字确认</b>。</p>
+        <p>可在「设置」中切换到 DeepSeek / 通义千问 / 智谱 GLM / 本地 vLLM 等在线模型，切换后推理轨迹与工具调用协议完全一致。</p>
+      </div>
+    </section>
+  </aside>
+
+  <!-- ============ 中栏：编排画布 + 数字孪生 ============ -->
+  <section class="col col-mid">
+    <section class="panel panel-canvas">
+      <div id="canvasPanel"></div>
+    </section>
+    <section class="panel panel-twin">
+      <header class="panel-head">
+        <h2>C-SMART 数字孪生态势</h2>
+        <span class="hint">智能体每次工具调用会在对应构件上高亮</span>
+      </header>
+      <div class="panel-body" id="twinPanel"></div>
+    </section>
+  </section>
+
+  <!-- ============ 右栏：轨迹 + 报告 ============ -->
+  <section class="col col-right">
+    <section class="panel panel-trace">
+      <div id="tracePanel"></div>
+    </section>
+    <section class="panel panel-report">
+      <div id="reportPanel"></div>
+    </section>
+  </section>
+</main>
+
+<footer class="pagefoot">
+  <span>见仁建智 · 多智能体协同工程管理系统 · Demo 原型</span>
+  <span>依据：GB 50242 / GB 50666 / GB 50797 / GB 51368 / JGJ 1 / JGJ 59 等公开规范条文</span>
+</footer>
+
+<!-- ============ 设置弹窗 ============ -->
+<div class="mask" id="settingsMask">
+  <div class="modal">
+    <header class="modal-head">
+      <h2>决策模型设置</h2>
+      <button id="settingsClose" class="icon-btn" aria-label="关闭">×</button>
+    </header>
+    <div class="modal-body">
+      <label class="field">快速预设
+        <select id="presetSelect"></select>
+      </label>
+      <label class="field">适配器
+        <select id="providerSelect">
+          <option value="offline">offline · 离线确定性推理（无网络可运行）</option>
+          <option value="openai">openai · OpenAI 兼容接口</option>
+          <option value="anthropic">anthropic · Anthropic Messages</option>
+        </select>
+      </label>
+      <label class="field">Base URL
+        <input id="baseUrlInput" type="text" placeholder="https://api.deepseek.com/v1">
+      </label>
+      <label class="field">模型名
+        <input id="modelInput" type="text" placeholder="deepseek-chat">
+      </label>
+      <label class="field">API Key
+        <input id="apiKeyInput" type="password" placeholder="仅保存在本机 localStorage，不会上传">
+      </label>
+      <label class="field">每个智能体最大步数
+        <input id="maxStepsInput" type="number" min="1" max="12" value="6">
+      </label>
+      <div class="modal-actions">
+        <button id="testSettings" class="ghost-btn">测试连通性</button>
+        <button id="saveSettings" class="primary-btn">保存并应用</button>
+      </div>
+      <p class="test-result" id="testResult"></p>
+      <p class="modal-note">浏览器直连第三方接口会受 CORS 限制并暴露密钥。正式部署请使用仓库内 <code>gateway/server.js</code> 转发；离线模式不产生任何网络请求。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 无构建步骤：普通 script 标签按依赖顺序加载，保证 file:// 直接双击可用 -->
+<script src="js/data/project.js"></script>
+<script src="js/data/knowledge.js"></script>
+<script src="js/core/tools.js"></script>
+<script src="js/core/llm.js"></script>
+<script src="js/core/prompts.js"></script>
+<script src="js/core/agent.js"></script>
+<script src="js/core/orchestrator.js"></script>
+<script src="js/config.js"></script>
+<script src="js/ui/util.js"></script>
+<script src="js/ui/render.js"></script>
+<script src="js/ui/twin.js"></script>
+<script src="js/ui/canvas.js"></script>
+<script src="js/ui/trace.js"></script>
+<script src="js/ui/report.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
