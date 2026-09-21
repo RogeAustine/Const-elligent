@@ -1,0 +1,4 @@
+timestamp,device_id,irradiance_wm2,module_temp_c,dc_power_w,ac_power_w,rated_power_w
+2026-09-20T11:00:00,PV-03,800,45,370,355.2,500
+2026-09-20T11:15:00,PV-03,800,45,370,355.2,500
+2026-09-20T11:30:00,PV-03,800,45,370,355.2,500
